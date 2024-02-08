@@ -1,9 +1,9 @@
 module(..., package.seeall)
 
--- 同步时间, 上传录音文件需要正确的时间作为路径名
+-- 同步时间
 function sync()
     -- 如果时间正常, 则不同步, 并删除定时器
-    if os.date("*t").year >= 2023 then
+    if os.date("*t").year >= 2024 then
         log.info("util_ntp.sync", "时间正常, 无需同步")
         sys.timerStopAll(sync)
         return
@@ -12,7 +12,7 @@ function sync()
     ntp.timeSync(
         1,
         function(time, result)
-            if result and time.year >= 2023 then
+            if result and time.year >= 2024 then
                 log.info("util_ntp.sync", "同步完成, 时间正常")
                 sys.timerStopAll(sync)
                 return

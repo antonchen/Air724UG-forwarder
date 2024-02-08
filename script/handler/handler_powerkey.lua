@@ -28,10 +28,7 @@ local options = {
     {
         name = "测试通知",
         func = function()
-            util_notify.add("#ALIVE")
-            -- for i = 1, 5 do
-            --     util_notify.add(string.rep("测试通知", 200) .. i)
-            -- end
+            util_notify.add({"#ALIVE"})
         end
     },
     {
@@ -47,37 +44,13 @@ local options = {
         end
     },
     {
-        name = "短信播报",
-        func = function()
-            local options = {"关闭", "仅验证码", "全部"}
-            local currentOptionIndex = nvm.get("SMS_TTS") or 0
-            currentOptionIndex = currentOptionIndex >= #options - 1 and 0 or currentOptionIndex + 1
-            nvm.set("SMS_TTS", currentOptionIndex)
-            tts(options[currentOptionIndex + 1])
-        end
-    },
-    {
         name = "来电动作",
         func = function()
-            local options = {"无操作", "接听", "挂断", "接听后挂断"}
+            local options = {"无操作", "接听后挂断", "挂断"}
             local currentOptionIndex = nvm.get("CALL_IN_ACTION") or 0
             currentOptionIndex = currentOptionIndex >= #options - 1 and 0 or currentOptionIndex + 1
             nvm.set("CALL_IN_ACTION", currentOptionIndex)
             tts(options[currentOptionIndex + 1])
-        end
-    },
-    {
-        name = "通话播放",
-        func = function()
-            nvm.set("CALL_PLAY_TO_SPEAKER_ENABLE", not nvm.get("CALL_PLAY_TO_SPEAKER_ENABLE"))
-            tts("通话播放 " .. (nvm.get("CALL_PLAY_TO_SPEAKER_ENABLE") and "开" or "关"))
-        end
-    },
-    {
-        name = "通话麦克风",
-        func = function()
-            nvm.set("CALL_MIC_ENABLE", not nvm.get("CALL_MIC_ENABLE"))
-            tts("通话麦克风 " .. (nvm.get("CALL_MIC_ENABLE") and "开" or "关"))
         end
     },
     {

@@ -2,7 +2,7 @@ PROJECT = "air724ug-forwarder"
 VERSION = "1.0.0"
 
 require "log"
-LOG_LEVEL = log.LOGLEVEL_INFO
+LOG_LEVEL = log.LOGLEVEL_ERROR
 require "config"
 require "nvm"
 nvm.init("config.lua")
@@ -64,7 +64,7 @@ sys.taskInit(
 
         -- 开机通知
         if nvm.get("BOOT_NOTIFY") then
-            util_notify.add("#BOOT")
+            util_notify.add({"#BOOT"})
         end
 
         -- 定时查询流量

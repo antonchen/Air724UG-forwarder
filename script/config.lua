@@ -3,61 +3,15 @@ module(...)
 -------------------------------------------------- 通知相关配置 --------------------------------------------------
 
 -- 通知类型, 支持配置多个
--- NOTIFY_TYPE = {"custom_post", "telegram", "pushdeer", "bark", "dingtalk", "feishu", "wecom", "pushover", "inotify", "next-smtp-proxy", "gotify", "serverchan"}
-NOTIFY_TYPE = {"feishu"}
+-- NOTIFY_TYPE = {"api", "telegram"}
+NOTIFY_TYPE = {"api", "telegram"}
 
--- custom_post 通知配置, 自定义 POST 请求, CUSTOM_POST_BODY_TABLE 中的 {msg} 会被替换为通知内容
-CUSTOM_POST_URL = "https://sctapi.ftqq.com/<SENDKEY>.send"
-CUSTOM_POST_CONTENT_TYPE = "application/json"
-CUSTOM_POST_BODY_TABLE = {["title"] = "这里是标题", ["desp"] = "{msg}"}
+API = "https://api.example.com/sms"
+TOKEN = "kkkkkkkkkkkkkkk"
 
--- telegram 通知配置, https://github.com/0wQ/telegram-notify 或者自行反代
--- TELEGRAM_API = "https://api.telegram.org/bot{token}/sendMessage"
--- TELEGRAM_CHAT_ID = ""
-
--- pushdeer 通知配置, https://www.pushdeer.com/
--- PUSHDEER_API = "https://api2.pushdeer.com/message/push"
--- PUSHDEER_KEY = ""
-
--- bark 通知配置, https://github.com/Finb/Bark
--- BARK_API = "https://api.day.app"
--- BARK_KEY = ""
-
--- dingtalk 通知配置, https://open.dingtalk.com/document/robots/custom-robot-access
--- DINGTALK_WEBHOOK = "https://oapi.dingtalk.com/robot/send?access_token=xxx"
-
--- feishu 通知配置, https://open.feishu.cn/document/ukTMukTMukTM/ucTM5YjL3ETO24yNxkjN
-FEISHU_WEBHOOK = "https://open.feishu.cn/open-apis/bot/v2/hook/xxx"
-
--- wecom 通知配置, https://developer.work.weixin.qq.com/document/path/91770
--- WECOM_WEBHOOK = "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=xxx"
-
--- pushover 通知配置, https://pushover.net/api
--- PUSHOVER_API_TOKEN = ""
--- PUSHOVER_USER_KEY = ""
-
--- inotify 通知配置, https://github.com/xpnas/Inotify 或者使用合宙提供的 https://push.luatos.org
--- INOTIFY_API = "https://push.luatos.org/xxx.send"
-
--- next-smtp-proxy 通知配置, https://github.com/0wQ/next-smtp-proxy
--- NEXT_SMTP_PROXY_API = ""
--- NEXT_SMTP_PROXY_USER = ""
--- NEXT_SMTP_PROXY_PASSWORD = ""
--- NEXT_SMTP_PROXY_HOST = "smtp-mail.outlook.com"
--- NEXT_SMTP_PROXY_PORT = 587
--- NEXT_SMTP_PROXY_FORM_NAME = "Air780E"
--- NEXT_SMTP_PROXY_TO_EMAIL = ""
--- NEXT_SMTP_PROXY_SUBJECT = "来自 Air780E 的通知"
-
--- gotify 通知配置, https://gotify.net/
--- GOTIFY_API = ""
--- GOTIFY_TITLE = "Air780E"
--- GOTIFY_PRIORITY = 8
--- GOTIFY_TOKEN = ""
-
--- ServerChan 配置
--- SERVERCHAN_TITLE = "来自 Air724UG 的通知"
--- SERVERCHAN_API = ""
+-- telegram 通知配置
+TELEGRAM_API = "https://api.telegram.org/bot<Token>/sendMessage"
+TELEGRAM_CHAT_ID = "111111"
 
 -- 定时查询流量间隔, 单位毫秒, 设置为 0 关闭 (建议检查 util_mobile.lua 文件中运营商号码和查询流量代码是否正确, 以免发错短信导致扣费, 收到查询结果短信发送通知会消耗流量)
 QUERY_TRAFFIC_INTERVAL = 0
@@ -71,33 +25,17 @@ NOTIFY_APPEND_MORE_INFO = true
 -- 通知最大重发次数
 NOTIFY_RETRY_MAX = 20
 
--------------------------------------------------- 录音上传配置 --------------------------------------------------
-
--- 腾讯云 COS / 阿里云 OSS / AWS S3 等对象存储上传地址, 以下为腾讯云 COS 示例, 请自行修改
--- 存储桶需设置为: <私有读写>
--- 存储桶 Policy 权限: <用户类型: 所有用户> <授权资源: xxx-123456/{录音文件目录}/*> <授权操作: PutObject,GetObject>
--- 提示: 本项目未使用签名认证上传, 请勿泄露自己的地址及目录名
-UPLOAD_URL = "http://xxx-123456.cos.ap-nanjing.myqcloud.com/{录音文件目录}"
-
 -------------------------------------------------- 短信来电配置 --------------------------------------------------
+LOCAL_NUMBER = 13813813813
 
 -- 允许发短信控制设备的号码, 如果注释掉或者为空, 则允许所有号码
 -- SMS_CONTROL_WHITELIST_NUMBERS = {"18xxxxxxx", "18xxxxxxx", "18xxxxxxx", "18xxxxxxx"},
-SMS_CONTROL_WHITELIST_NUMBERS = {}
+SMS_CONTROL_WHITELIST_NUMBERS = {"13813813813"}
 
--- 扬声器 TTS 播放短信内容, 0：关闭(默认)，1：仅验证码，2：全部
-SMS_TTS = 0
+-- 电话接通后 TTS 语音内容, 在播放完后开始录音, 如果注释掉或者为空则播放 audio_pickup_hangup.amr 文件
+-- TTS_TEXT = "您好，此号不接电话，请通过其它方式联系。"
 
--- 电话接通后 TTS 语音内容, 在播放完后开始录音, 如果注释掉或者为空则播放 audio_pickup_record.amr 或 audio_pickup_hangup.amr 文件
--- TTS_TEXT = "您好，请在语音结束后留言，稍后将发送到机主，结束请挂机。"
-
--- 扬声器播放通话声音
-CALL_PLAY_TO_SPEAKER_ENABLE = false
-
--- 开启通话麦克风
-CALL_MIC_ENABLE = false
-
--- 来电动作, 0：无操作，1：接听(默认)，2：挂断, 3：接听后挂断
+-- 来电动作, 0：无操作，1：接听后挂断，2：挂断
 CALL_IN_ACTION = 1
 
 -------------------------------------------------- 其他配置 --------------------------------------------------

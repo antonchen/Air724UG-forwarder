@@ -53,24 +53,22 @@ local function smsContentMatcher(sender_number, sms_content)
     sender_number = type(sender_number) == "string" and sender_number or ""
     sms_content = type(sms_content) == "string" and sms_content or ""
 
-    -- 如果短信内容是 `CALL,{called_number}`, 则拨打电话
-    local called_number = sms_content:match("^CALL,(%d+)$")
-    called_number = called_number or ""
-
-    -- 判断号码符合要求
-    if isAllowNumber(called_number, sender_number) then
-        log.info("handler_sms.smsContentMatcher", "拨打电话", called_number)
-        -- 拨打电话
-        sys.taskInit(cc.dial, called_number)
+    -- 如果短信内容是 `CMD,{command}`，则执行命令
+    local command = sms_content:match("^CMD,(.*)$")
+    command = command or ""
+    if command:len() > 0 and command == "重启" then
         -- 发送通知
         util_notify.add(
             {
-                sender_number .. "的短信触发了<拨打电话>",
+                sender_number .. "的短信触发了<执行命令>",
                 "",
-                "被叫人号码: " .. called_number,
+                "命令: " .. command,
                 "#CONTROL"
             }
         )
+        -- 重启
+        log.info("handler_sms.smsContentMatcher", "重启设备")
+        sys.timerStart(sys.restart, 6000, "SMS Control")
         return
     end
 
@@ -114,52 +112,14 @@ local function smsCallback(sender_number, sms_content, datetime)
     -- 发送通知
     util_notify.add(
         {
-            sms_content,
-            "",
-            "发件号码: " .. sender_number,
-            "发件时间: " .. datetime,
-            "#SMS"
+            smsContent = sms_content,
+            senderNumber = sender_number,
+            senderTime = datetime,
+            type = "SMS"
         }
     )
     -- 短信内容匹配
     sys.taskInit(smsContentMatcher, sender_number, sms_content)
-
-    -- 判断音量
-    if nvm.get("AUDIO_VOLUME") == 0 or nvm.get("AUDIO_VOLUME") == nil then
-        return
-    end
-
-    -- 短信提示音
-    util_audio.play(4, "FILE", "/lua/audio_new_sms.mp3")
-
-    -- 判断 SMS_TTS 开关
-    if type(nvm.get("SMS_TTS")) ~= "number" or nvm.get("SMS_TTS") == 0 then
-        return
-    end
-
-    -- TTS 仅播报验证码
-    if nvm.get("SMS_TTS") >= 1 then
-        if sms_content:match("验证码") or sms_content:match("校验码") or sms_content:match("取件码") then
-            -- 提取发送者
-            local sender_name = sms_content:match("【(.+)】")
-            sender_name = sender_name or ""
-
-            -- 提取验证码 (至少4位数字)
-            local code = sms_content:match("%d%d%d%d+")
-
-            if code then
-                audio.setTTSSpeed(65)
-                sys.timerStart(util_audio.play, 1000 * 2, 5, "TTS", "[n1]收到" .. sender_name .. "验证码 " .. code)
-                return
-            end
-        end
-    end
-
-    -- TTS 播报全部短信内容
-    if nvm.get("SMS_TTS") == 2 then
-        audio.setTTSSpeed(70)
-        sys.timerStart(util_audio.play, 1000 * 2, 5, "TTS", "[n1]收到来自" .. sender_number .. "的短信，" .. sms_content)
-    end
 end
 
 -- 设置短信回调
